@@ -1,15 +1,13 @@
 import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output, computed, inject, signal} from '@angular/core';
 import {TranslocoDirective} from '@jsverse/transloco';
 import {RATE_MAX, RATE_MIN, SpeechVoiceService} from './speech-voice.service';
-import {SpeechQueueService} from './speech-queue.service';
 
 /**
  * Voice and speed controls for read-aloud, shared by the ebook and PDF readers.
  *
- * What is on offer depends on which engine won. Kokoro ships one voice, so it
- * gets a speed control and nothing to pick; the Web Speech fallback gets the
- * browser's voice list, ordered best-first for the book's language — see
- * `voice-ranking.util.ts` for why that ordering is the most we can do there.
+ * The voices on offer come from the device the reader is running on, ordered
+ * best-first for the book's language — see `voice-ranking.util.ts` for how
+ * "best" is decided and why low-quality and novelty voices are hidden.
  */
 @Component({
   selector: 'app-read-aloud-controls',
@@ -25,7 +23,6 @@ export class ReadAloudControlsComponent implements OnInit {
   @Output() closed = new EventEmitter<void>();
 
   private readonly voiceService = inject(SpeechVoiceService);
-  private readonly speech = inject(SpeechQueueService);
 
   readonly rateMin = RATE_MIN;
   readonly rateMax = RATE_MAX;
@@ -38,22 +35,13 @@ export class ReadAloudControlsComponent implements OnInit {
   /** Best-first for this book's language. */
   readonly voices = computed(() => this.voiceService.voicesFor(this.langSignal()));
 
-  private readonly hasVoices = computed(() => this.voices().length > 0);
-
-  /** Kokoro has a single built-in voice, so there is nothing to choose between. */
-  readonly isKokoro = computed(() => this.speech.engineId() === 'kokoro');
-
-  readonly showVoicePicker = computed(
-    () => this.speech.engineId() === 'web-speech' && this.hasVoices(),
-  );
+  readonly hasVoices = computed(() => this.voices().length > 0);
 
   /**
-   * Only meaningful for the fallback engine: Kokoro brings its own voice, so a
-   * device with no OS voices installed is not a problem there.
+   * Whether the device is offering only its lower-quality voices, so the hint
+   * about downloading better ones is worth the space.
    */
-  readonly showNoVoices = computed(
-    () => this.speech.engineId() === 'web-speech' && !this.hasVoices(),
-  );
+  readonly showQualityHint = computed(() => this.voiceService.lacksHighQualityVoice(this.langSignal()));
 
   ngOnInit(): void {
     this.langSignal.set(this.lang);

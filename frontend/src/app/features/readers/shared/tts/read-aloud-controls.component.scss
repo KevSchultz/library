@@ -55,8 +55,10 @@
   line-height: 1.4;
 }
 
-.voice-name {
+.voice-hint {
   margin: 0;
+  max-width: 240px;
   font-size: 0.75rem;
+  line-height: 1.4;
   opacity: 0.7;
 }

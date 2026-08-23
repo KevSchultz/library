@@ -71,9 +71,8 @@
     "annotationSaved": "Annotations Saved",
     "annotationFailed": "Failed to save annotations",
     "readAloudSummary": "Read Aloud",
-    "readAloudSlow": "This device generates speech slower than it plays, so there will be pauses between phrases.",
     "readAloudFailed": "Could not read this document aloud.",
-    "readAloudUnsupported": "Read-aloud could not start on this device. It needs WebAssembly and audio playback.",
+    "readAloudUnsupported": "This browser cannot read aloud. It has no speech synthesis support.",
     "readAloudNoText": "This PDF has no text layer — it looks like a scan. Reading it aloud would need OCR."
   },
   "docViewer": {

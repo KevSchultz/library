@@ -12,7 +12,6 @@ import {
   ssmlToSpeechPlan
 } from '../../../shared/tts/ssml-to-speech.util';
 import {TextChunk, chunkForSpeech} from '../../../shared/tts/speech-chunk.util';
-import {LOOKAHEAD} from '../../../shared/tts/kokoro.engine';
 
 /**
  * If a section ends and no new document loads within this window, we are at the
@@ -58,8 +57,6 @@ export class EbookTtsService {
   /** The current block, split into utterance-sized pieces. */
   private chunks: TextChunk[] = [];
   private chunkIndex = 0;
-  /** The slow-device warning is shown at most once per reading session. */
-  private warnedSlow = false;
 
   constructor() {
     this.destroyRef.onDestroy(() => this.stop());
@@ -94,7 +91,6 @@ export class EbookTtsService {
     if (this._isReading()) {
       return;
     }
-    // Inside the toolbar click, so the AudioContext Kokoro needs is allowed to start.
     if (!await this.speech.prepare()) {
       this.notifyError('readerEbook.toast.readAloudUnsupported');
       return;
@@ -108,7 +104,6 @@ export class EbookTtsService {
 
     this._isReading.set(true);
     this.lastMark = null;
-    this.warnedSlow = false;
 
     // Start at the top of the page on screen, not the top of the chapter.
     const ssml = this.visibleRange
@@ -167,11 +162,9 @@ export class EbookTtsService {
   /**
    * Speaks one block, a sentence at a time.
    *
-   * The block is not sent as a single utterance because a synthesising engine
-   * would have to generate the whole paragraph before the first word is heard.
-   * Splitting lets the next sentence be generated while the current one plays;
-   * `ttsNext()` is destructive, so this is also the only lookahead available —
-   * the pause between blocks stays, which reads as natural paragraph phrasing.
+   * Sentence-sized utterances keep `stop()` responsive and stay well clear of
+   * the Chromium cutoff a whole-paragraph utterance can run into. The pause
+   * between blocks stays, which reads as natural paragraph phrasing.
    */
   private speakPlan(plan: SpeechPlan): void {
     const lang = plan.lang ?? this.documentLanguage();
@@ -215,15 +208,6 @@ export class EbookTtsService {
         this.notifyError('readerEbook.toast.readAloudFailed');
       }
     });
-
-    this.warnIfSlow();
-
-    for (let i = 0; i < LOOKAHEAD; i++) {
-      const upcoming = this.chunks[this.chunkIndex + i];
-      if (upcoming) {
-        this.speech.prefetch(upcoming.text, rate);
-      }
-    }
   }
 
   /**
@@ -267,18 +251,6 @@ export class EbookTtsService {
       clearTimeout(this.sectionTimeout);
       this.sectionTimeout = null;
     }
-  }
-
-  /**
-   * Says why the gaps are there. Synthesis slower than playback cannot be fixed
-   * by buffering — the buffer drains — so silence about it just looks broken.
-   */
-  private warnIfSlow(): void {
-    if (this.warnedSlow || !this.speech.cannotKeepUp()) {
-      return;
-    }
-    this.warnedSlow = true;
-    this.notifyError('readerEbook.toast.readAloudSlow');
   }
 
   private notifyError(key: string): void {

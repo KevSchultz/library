@@ -1,11 +1,11 @@
 import {Injectable, computed, signal} from '@angular/core';
-import {pickBestVoice, rankVoices} from './voice-ranking.util';
+import {lacksHighQualityVoice, pickBestVoice, rankVoices} from './voice-ranking.util';
 
 const STORAGE_KEY = 'grimmory.readAloud.preferences';
 
 const RATE_MIN = 0.5;
-// Kokoro's `speed` degrades outside roughly 0.5-2; Web Speech tolerates more but
-// there is no reason to offer a range only one of the two engines can honour.
+// Past 2x most platform voices stop being intelligible, and several clamp there
+// anyway rather than honouring the value.
 const RATE_MAX = 2;
 const DEFAULT_RATE = 1;
 
@@ -82,6 +82,14 @@ export class SpeechVoiceService {
   /** Voices ordered best-first for `lang`, for display in the picker. */
   voicesFor(lang: string | null): SpeechSynthesisVoice[] {
     return rankVoices(this._voices(), lang);
+  }
+
+  /**
+   * Whether this device has nothing better than its basic voices for `lang`, so
+   * the UI should mention that a better one can be installed.
+   */
+  lacksHighQualityVoice(lang: string | null): boolean {
+    return lacksHighQualityVoice(this._voices(), lang);
   }
 
   /**

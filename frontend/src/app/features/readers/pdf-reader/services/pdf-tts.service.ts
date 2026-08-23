@@ -3,7 +3,6 @@ import { MessageService } from '@openng/optimus-ui/api';
 import { TranslocoService } from '@jsverse/transloco';
 import { EmbedPdfBookService } from './embedpdf-book.service';
 import { SpeechQueueService } from '../../shared/tts/speech-queue.service';
-import { LOOKAHEAD } from '../../shared/tts/kokoro.engine';
 import { SpeechVoiceService } from '../../shared/tts/speech-voice.service';
 import { isPageTextEmpty, splitIntoSentences } from '../utils/pdf-text.util';
 
@@ -46,8 +45,6 @@ export class PdfTtsService {
   private sentences: string[] = [];
   private sentenceIndex = 0;
   private consecutiveEmptyPages = 0;
-  /** The slow-device warning is shown at most once per reading session. */
-  private warnedSlow = false;
 
   constructor() {
     this.destroyRef.onDestroy(() => this.stop());
@@ -70,7 +67,6 @@ export class PdfTtsService {
     if (this._isReading() || !this.book) {
       return;
     }
-    // Inside the toolbar click, so the AudioContext Kokoro needs is allowed to start.
     if (!await this.speech.prepare()) {
       this.notify('readerPdf.toast.readAloudUnsupported');
       return;
@@ -78,7 +74,6 @@ export class PdfTtsService {
 
     this._isReading.set(true);
     this.consecutiveEmptyPages = 0;
-    this.warnedSlow = false;
 
     // `currentPage` is 1-based; page text is addressed zero-based.
     this.pageIndex = Math.max(0, this.book.currentPage - 1);
@@ -145,19 +140,6 @@ export class PdfTtsService {
         this.notify('readerPdf.toast.readAloudFailed');
       }
     });
-
-    // Generate the following sentences while this one plays. Without this, a
-    // synthesising engine leaves an audible gap at every sentence boundary; one
-    // sentence of lead is not enough when generation is near real time, so keep
-    // several in flight.
-    this.warnIfSlow();
-
-    for (let i = 0; i < LOOKAHEAD; i++) {
-      const upcoming = this.sentences[this.sentenceIndex + i];
-      if (upcoming) {
-        this.speech.prefetch(upcoming, rate);
-      }
-    }
   }
 
   private advancePage(): void {
@@ -176,18 +158,6 @@ export class PdfTtsService {
     // scrollToPage takes a 1-based page number.
     book.scrollToPage(nextIndex + 1, 'smooth');
     void this.loadAndSpeakPage();
-  }
-
-  /**
-   * Says why the gaps are there. Synthesis slower than playback cannot be fixed
-   * by buffering — the buffer drains — so silence about it just looks broken.
-   */
-  private warnIfSlow(): void {
-    if (this.warnedSlow || !this.speech.cannotKeepUp()) {
-      return;
-    }
-    this.warnedSlow = true;
-    this.notify('readerPdf.toast.readAloudSlow');
   }
 
   private notify(key: string): void {

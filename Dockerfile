@@ -22,19 +22,6 @@ COPY frontend/ ./frontend/
 RUN --mount=type=cache,target=/workspace/frontend/.angular/cache \
     CI=1 NG_CLI_ANALYTICS=false pnpm -C frontend run build:prod
 
-FROM scratch AS kokoro-model-layer
-
-# Kokoro-82M weights for in-browser read-aloud. Not committed (~92MB); keep this
-# checksum in step with MODEL_SHA256 in frontend/scripts/fetch-kokoro-model.mjs,
-# which is how the same file reaches `ng serve`.
-ARG KOKORO_MODEL_VERSION="v1.0"
-ARG KOKORO_MODEL_CHECKSUM="sha256:fbae9257e1e05ffc727e951ef9b9c98418e6d79f1c9b6b13bd59f5c9028a1478"
-
-ADD \
-    --checksum="${KOKORO_MODEL_CHECKSUM}" \
-    https://huggingface.co/onnx-community/Kokoro-82M-${KOKORO_MODEL_VERSION}-ONNX/resolve/main/onnx/model_quantized.onnx \
-    /model_quantized.onnx
-
 FROM --platform=$BUILDPLATFORM gradle:9.5.1-jdk25-alpine AS backend-build
 
 ARG TARGETARCH
@@ -52,7 +39,6 @@ RUN --mount=type=cache,target=/home/gradle/.gradle \
 
 COPY backend/ ./
 COPY --from=frontend-build /workspace/frontend/dist/grimmory/browser /tmp/frontend-dist
-COPY --from=kokoro-model-layer /model_quantized.onnx /tmp/frontend-dist/assets/kokoro/onnx/model_quantized.onnx
 
 RUN --mount=type=cache,target=/home/gradle/.gradle \
     TARGETARCH=${TARGETARCH} ./gradlew --no-daemon -PfrontendDistDir=/tmp/frontend-dist bootJar

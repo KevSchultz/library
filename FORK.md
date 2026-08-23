@@ -17,7 +17,7 @@ Per section 5(a) of the GNU AGPL, the changes carried here beyond upstream v3.3.
 | Date | Change | Files |
 |---|---|---|
 | 2026-08-19 | **PDF night mode inverts the page itself.** Upstream's dark theme only recolours EmbedPDF's chrome, leaving the page white. This darkens the page div and inverts its render tiles. | `frontend/src/app/features/readers/pdf-reader/services/embedpdf-book.service.ts`, `frontend/src/assets/embedpdf-frame.html` |
-| 2026-08-19 | **Read aloud for PDF and EPUB.** A shared TTS layer with two backends — the browser's `SpeechSynthesis`, and Kokoro-82M running locally in a worker via onnxruntime-web. | `frontend/src/app/features/readers/shared/tts/`, `frontend/src/app/features/readers/ebook-reader/features/tts/`, `frontend/src/app/features/readers/pdf-reader/services/pdf-tts.service.ts`, plus reader components, i18n, `Dockerfile`, `frontend/package.json`, `frontend/angular.json` |
+| 2026-08-19 | **Read aloud for PDF and EPUB.** A shared TTS layer over the browser's `SpeechSynthesis`, speaking with the voices installed on the reading device. Voices are ranked so the platform's high-quality neural voices (Apple Premium/Enhanced, Microsoft Natural) win, and novelty voices are hidden. | `frontend/src/app/features/readers/shared/tts/`, `frontend/src/app/features/readers/ebook-reader/features/tts/`, `frontend/src/app/features/readers/pdf-reader/services/pdf-tts.service.ts`, plus reader components and i18n |
 
 The full change set is in the git history on top of `ddb9d3cfc`.
 
@@ -33,15 +33,11 @@ as a network service must offer its users the corresponding source.
 
 ## Third-party assets added by this fork
 
-Read-aloud bundles the **[Kokoro-82M](https://huggingface.co/hexgrad/Kokoro-82M)**
-model (Apache-2.0), via the ONNX build at
-[onnx-community/Kokoro-82M-v1.0-ONNX](https://huggingface.co/onnx-community/Kokoro-82M-v1.0-ONNX).
+None. Read-aloud uses the speech voices already installed on the reading device
+through the browser's Web Speech API, so no model weights or voice data are
+bundled or downloaded.
 
-The ~92MB weights file is **not committed**. It is fetched at build time:
-
-- Docker — an `ADD --checksum=` layer in the [Dockerfile](Dockerfile).
-- Local dev — `pnpm -C frontend run fetch:kokoro`.
-
-Both pin the same SHA-256; keep them in step. The small config, tokenizer, and voice
-files under `frontend/src/assets/kokoro/` *are* committed, and carry the model's own
-Apache-2.0 licence.
+An earlier revision of this fork shipped an in-browser
+[Kokoro-82M](https://huggingface.co/hexgrad/Kokoro-82M) backend. It was removed:
+the ~92MB download was a poor trade against the platform's own neural voices,
+which start instantly and, on macOS and Windows, sound better.

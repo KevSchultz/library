@@ -197,8 +197,7 @@
     "noteAnnotationUpdateFailedSummary": "Unable to Update Note",
     "noteAnnotationUpdateFailedDetail": "Something went wrong while updating the note. Please try again.",
     "readAloudSummary": "Read Aloud",
-    "readAloudSlow": "This device generates speech slower than it plays, so there will be pauses between phrases.",
     "readAloudFailed": "Could not start reading this book aloud.",
-    "readAloudUnsupported": "Read-aloud could not start on this device. It needs WebAssembly and audio playback."
+    "readAloudUnsupported": "This browser cannot read aloud. It has no speech synthesis support."
   }
 }

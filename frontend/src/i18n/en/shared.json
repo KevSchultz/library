@@ -126,9 +126,7 @@
       "speed": "Speed",
       "resetSpeed": "Reset to normal speed",
       "noVoices": "This browser has no speech voices installed. Read-aloud uses the voices on the device you are reading from.",
-      "kokoroVoice": "Voice: Heart",
-      "loadingModel": "Preparing the voice…",
-      "loadingModelHint": "Downloading the read-aloud voice. This happens once per device."
+      "installBetterVoices": "For a more natural voice, add a higher-quality voice in your device's speech settings."
     }
   },
   "settingsHelper": {

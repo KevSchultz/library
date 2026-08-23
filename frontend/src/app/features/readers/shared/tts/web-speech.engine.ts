@@ -16,7 +16,8 @@ function isChromium(): boolean {
 }
 
 /**
- * `window.speechSynthesis` backend — the fallback when Kokoro cannot run.
+ * `window.speechSynthesis` backend, speaking with the voices installed on the
+ * device the reader is running on.
  *
  * Owns the two things that make the raw API awkward: the Chromium cutoff above,
  * and the fact that `cancel()` still fires `end` on the utterance it killed —
@@ -24,7 +25,7 @@ function isChromium(): boolean {
  * advance to the next one.
  *
  * Voice selection lives here rather than in `SpeakRequest` so callers never
- * have to hold a `SpeechSynthesisVoice`, which the Kokoro engine has no notion of.
+ * have to hold a `SpeechSynthesisVoice`.
  */
 @Injectable({providedIn: 'root'})
 export class WebSpeechEngine implements SpeechEngine {

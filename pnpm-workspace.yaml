@@ -12,9 +12,5 @@ allowBuilds:
   esbuild: true
   lmdb: true
   msgpackr-extract: true
-  # Node-only transitive deps of @huggingface/transformers (via kokoro-js).
-  # The browser build never reaches them -- it uses onnxruntime-web -- so their
-  # native build steps are denied rather than allowed.
-  onnxruntime-node: false
   protobufjs: false
   sharp: false
