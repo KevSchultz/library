@@ -1,3 +1,9 @@
+> [!IMPORTANT]
+> **This is a personal fork of [grimmory-tools/grimmory](https://github.com/grimmory-tools/grimmory),
+> not the upstream project.** It adds PDF night mode that inverts the page itself, and
+> read-aloud for PDF and EPUB. See [FORK.md](FORK.md) for what changed and the licence terms.
+> Please report problems here, not to upstream.
+
 > [!NOTE]
 > Grimmory is an independent community fork of Booklore.
 
