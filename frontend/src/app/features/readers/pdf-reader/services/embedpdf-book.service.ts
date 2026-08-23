@@ -762,6 +762,21 @@ export class EmbedPdfBookService {
           --ep-foreground-secondary: rgba(0,0,0,0.54);
         }
 
+        /* ── Night mode: invert the page, not just the chrome ──
+           EmbedPDF's theme only recolours its own UI, so the page stays white
+           paper in dark mode. A page is an absolutely-positioned div that
+           EmbedPDF paints #fff and fills with <img> render tiles: darken the
+           div so no white flashes through before a tile arrives, and invert
+           the tiles that sit on it. hue-rotate(180deg) undoes the hue flip
+           invert() causes, so colour artwork keeps roughly its own hue. */
+        :host(:not([data-color-scheme="light"])) [class*="bg-bg-app"] [style*="transform-origin"][style*="rgb(255, 255, 255)"] {
+          background-color: #131313 !important;
+        }
+
+        :host(:not([data-color-scheme="light"])) [class*="bg-bg-app"] img {
+          filter: invert(1) hue-rotate(180deg);
+        }
+
         /* Hide the built-in header toolbar */
         [class*="border-b"][class*="bg-bg-surface"][class*="px-4"][class*="py-2"] {
           display: none !important;
