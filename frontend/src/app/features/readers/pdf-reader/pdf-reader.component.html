@@ -63,7 +63,6 @@
               <app-reader-icon name="chevron-down" [size]="14" />
             </button>
             @if (isReadAloudSettingsOpen()) {
-              <div class="toolbar-overflow-backdrop" role="presentation" (click)="closeReadAloudSettings()"></div>
               <div class="read-aloud-popover">
                 <app-read-aloud-controls [lang]="readAloudLanguage()"
                   (closed)="closeReadAloudSettings()"></app-read-aloud-controls>
@@ -125,6 +124,12 @@
       </button>
     </div>
   </div>
+
+  <!-- Outside the toolbar on purpose: the toolbar is transformed, which would
+       make a `position: fixed` backdrop cover only the toolbar itself. -->
+  @if (isReadAloudSettingsOpen()) {
+  <div class="read-aloud-backdrop" role="presentation" (click)="closeReadAloudSettings()"></div>
+  }
 
   <!-- Mobile overflow menu -->
   @if (isToolbarOverflowOpen()) {

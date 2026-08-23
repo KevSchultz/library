@@ -270,7 +270,11 @@ export class PdfReaderComponent implements OnInit, OnDestroy {
       const keydownHandler = (e: KeyboardEvent) => {
         const isEditing = e.composedPath().some((target) => {
           const el = target as HTMLElement;
-          return el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || el.isContentEditable;
+          // SELECT included because typing a letter in a dropdown jumps to the
+          // matching option; without this, picking a voice starting with "x"
+          // closes the reader.
+          return el.tagName === 'INPUT' || el.tagName === 'TEXTAREA'
+            || el.tagName === 'SELECT' || el.isContentEditable;
         });
 
         if (e.key === 'x' || e.key === 'X') {
@@ -295,7 +299,12 @@ export class PdfReaderComponent implements OnInit, OnDestroy {
         }
 
         if (e.key === 'Escape') {
-          if (this.isSearchOpen()) {
+          // Most recently opened first: the popover sits above the rest.
+          if (this.isReadAloudSettingsOpen()) {
+            e.preventDefault();
+            e.stopPropagation();
+            this.ngZone.run(() => this.closeReadAloudSettings());
+          } else if (this.isSearchOpen()) {
             e.preventDefault();
             e.stopPropagation();
             this.ngZone.run(() => this.closeSearch());

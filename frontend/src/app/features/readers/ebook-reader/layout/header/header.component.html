@@ -22,8 +22,6 @@
           <app-reader-icon name="chevron-down" [size]="14"></app-reader-icon>
         </button>
         @if (readAloudSettingsOpen) {
-          <div class="overflow-backdrop" role="button" tabindex="0" [attr.aria-label]="t('more')"
-            (click)="readAloudSettingsOpen = false" (keydown.enter)="readAloudSettingsOpen = false"></div>
           <div class="read-aloud-popover" [style.background]="theme().bg" [style.color]="theme().fg">
             <app-read-aloud-controls [lang]="readAloudLanguage"
               (closed)="readAloudSettingsOpen = false"></app-read-aloud-controls>
@@ -48,7 +46,6 @@
         <app-reader-icon name="dots-vertical" [size]="20"></app-reader-icon>
       </button>
       @if (overflowOpen) {
-        <div class="overflow-backdrop" role="button" tabindex="0" (click)="overflowOpen = false" (keydown.enter)="overflowOpen = false"></div>
         <div class="overflow-dropdown" [style.background]="theme().bg" [style.color]="theme().fg">
           <button class="overflow-item" (click)="onOpenNotes(); overflowOpen = false">
             <app-reader-icon name="note" [size]="18"></app-reader-icon>
@@ -73,4 +70,13 @@
     </button>
   </div>
 </div>
+
+<!-- Outside .reader-header on purpose: it is transformed, which would make a
+     `position: fixed` backdrop cover only the header strip. -->
+@if (readAloudSettingsOpen) {
+  <div class="overflow-backdrop" role="presentation" (click)="readAloudSettingsOpen = false"></div>
+}
+@if (overflowOpen) {
+  <div class="overflow-backdrop" role="presentation" (click)="overflowOpen = false"></div>
+}
 </ng-container>

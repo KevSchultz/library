@@ -109,12 +109,6 @@
     z-index: 1000;
   }
 
-  .overflow-backdrop {
-    position: fixed;
-    inset: 0;
-    z-index: 999;
-  }
-
   .overflow-dropdown {
     position: absolute;
     top: 100%;
@@ -146,6 +140,15 @@
       background: rgb(128 128 128 / 15%);
     }
   }
+}
+
+/* Catches a click anywhere outside an open menu. Outside `.reader-header` in the
+   template because that element is transformed, which would otherwise confine
+   this to the header strip. Below the header's z-index so the menus stay on top. */
+.overflow-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 999;
 }
 
 @media (width <= 600px) {

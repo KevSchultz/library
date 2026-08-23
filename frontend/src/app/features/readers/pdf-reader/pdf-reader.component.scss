@@ -1048,6 +1048,15 @@ $transition-fast: 150ms ease;
   opacity: 0.6;
 }
 
+/* Catches a click anywhere outside the popover. Sits below the toolbar so the
+   popover, which lives inside it, still paints on top. Deliberately not dimmed:
+   this is a small settings panel, not a modal. */
+.read-aloud-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+}
+
 .read-aloud-popover {
   position: absolute;
   top: 100%;
