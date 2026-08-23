@@ -120,7 +120,7 @@ dependencies {
     // --- Database & Migration ---
     implementation("org.mariadb.jdbc:mariadb-java-client:3.5.10")
     implementation("org.springframework.boot:spring-boot-starter-flyway")
-    implementation("org.flywaydb:flyway-mysql:13.2.0")
+    implementation("org.flywaydb:flyway-mysql:13.3.0")
 
     // --- Lombok (For Clean Code) ---
     compileOnly("org.projectlombok:lombok:1.18.46")
@@ -138,7 +138,7 @@ dependencies {
     implementation("com.twelvemonkeys.imageio:imageio-bmp:3.14.0")
 
     // epub4j-grimmory fork publishes as org.grimmory:epub4j-core
-    implementation("org.grimmory:epub4j-core:1.5.0")
+    implementation("org.grimmory:epub4j-core:2.0.0")
 
     // --- Audio Metadata (Audiobook Support) ---
     implementation("com.github.RouHim:jaudiotagger:2.0.27")
@@ -173,7 +173,7 @@ dependencies {
     implementation("org.freemarker:freemarker:2.3.34")
 
     // --- Jackson 3 ---
-    implementation(platform("tools.jackson:jackson-bom:3.2.1"))
+    implementation(platform("tools.jackson:jackson-bom:3.2.2"))
     implementation("tools.jackson.core:jackson-core")
     implementation("tools.jackson.core:jackson-databind")
 
