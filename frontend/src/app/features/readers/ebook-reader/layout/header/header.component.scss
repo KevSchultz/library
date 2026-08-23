@@ -87,6 +87,28 @@
     position: relative;
   }
 
+  .read-aloud {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  .read-aloud-caret {
+    padding: 8px 2px;
+    opacity: 0.6;
+  }
+
+  .read-aloud-popover {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    margin-top: 4px;
+    border: 1px solid rgb(0 0 0 / 15%);
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgb(0 0 0 / 25%);
+    z-index: 1000;
+  }
+
   .overflow-backdrop {
     position: fixed;
     inset: 0;

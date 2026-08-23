@@ -1,0 +1,62 @@
+.read-aloud-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 240px;
+  padding: 12px;
+  font-size: 13px;
+}
+
+.control-label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  opacity: 0.8;
+}
+
+.voice-select {
+  width: 100%;
+  max-width: 260px;
+  padding: 5px 6px;
+  font: inherit;
+  color: inherit;
+  background: rgb(127 127 127 / 15%);
+  border: 1px solid rgb(127 127 127 / 35%);
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.rate-slider {
+  width: 100%;
+  cursor: pointer;
+  accent-color: currentcolor;
+}
+
+.rate-value {
+  padding: 0 4px;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  background: none;
+  border: none;
+  border-radius: 3px;
+  opacity: 0.9;
+
+  &:hover {
+    background: rgb(127 127 127 / 20%);
+  }
+}
+
+.no-voices {
+  margin: 0;
+  max-width: 240px;
+  opacity: 0.8;
+  line-height: 1.4;
+}
+
+.voice-name {
+  margin: 0;
+  font-size: 0.75rem;
+  opacity: 0.7;
+}

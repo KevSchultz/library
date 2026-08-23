@@ -73,9 +73,25 @@ interface FoliateSearchSectionResult {
 
 type FoliateSearchResult = FoliateSearchProgress | FoliateSearchSectionResult | 'done';
 
+/**
+ * The TTS controller from `assets/foliate/tts.js`. Each navigation method returns
+ * a serialised SSML document for the block it moved to, or undefined once the
+ * section is exhausted. `setMark` highlights the word a mark refers to.
+ */
+export interface FoliateTTS {
+  start(): string | undefined;
+  resume(): string | undefined;
+  next(paused?: boolean): string | undefined;
+  prev(paused?: boolean): string | undefined;
+  from(range: Range): string | undefined;
+  setMark(mark: string): void;
+}
+
 interface FoliateViewElement extends HTMLElement {
   renderer?: FoliateRenderer | null;
   book?: FoliateBook;
+  tts?: FoliateTTS | null;
+  initTTS?(granularity?: string, highlight?: (range: Range) => void): Promise<void>;
   open(target: File | object): Promise<void>;
   goTo(target: string | number): Promise<void>;
   goToFraction(fraction: number): Promise<void>;
@@ -334,5 +350,53 @@ export class ReaderViewManagerService {
 
   clearSearch(): void {
     this.view?.clearSearch?.();
+  }
+
+  // --- Read-aloud passthroughs ---
+  //
+  // The foliate element is private to this service, so text-to-speech reaches it
+  // the same way search and annotations do. All the segmentation and highlight
+  // work lives in `assets/foliate/tts.js`; these only forward to it.
+
+  /**
+   * Creates the TTS controller for the section on screen. Foliate itself no-ops
+   * when the controller already matches the current document, so this is safe to
+   * call before every block.
+   *
+   * The default highlight callback is deliberately left in place: it calls
+   * `renderer.scrollToAnchor`, which is what turns the page as reading advances.
+   */
+  async initTTS(): Promise<boolean> {
+    const view = this.view;
+    if (!view?.initTTS) {
+      return false;
+    }
+    // initTTS reads `renderer.getContents()[0].doc` without guarding.
+    if (!view.renderer?.getContents()?.[0]?.doc) {
+      return false;
+    }
+    await view.initTTS('word');
+    return !!view.tts;
+  }
+
+  get hasTTS(): boolean {
+    return !!this.view?.tts;
+  }
+
+  /** Begins at the block containing `range` — used to start from the visible page. */
+  ttsFrom(range: Range): string | undefined {
+    return this.view?.tts?.from(range);
+  }
+
+  ttsStart(): string | undefined {
+    return this.view?.tts?.start();
+  }
+
+  ttsNext(): string | undefined {
+    return this.view?.tts?.next();
+  }
+
+  ttsSetMark(mark: string): void {
+    this.view?.tts?.setMark(mark);
   }
 }

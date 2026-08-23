@@ -2,12 +2,13 @@ import {Component, EventEmitter, inject, Output} from '@angular/core';
 import {TranslocoDirective} from '@jsverse/transloco';
 import {ReaderHeaderService} from './header.service';
 import {ReaderIconComponent} from '../../shared/icon.component';
+import {ReadAloudControlsComponent} from '../../../shared/tts/read-aloud-controls.component';
 import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-reader-header',
   standalone: true,
-  imports: [TranslocoDirective, ReaderIconComponent],
+  imports: [TranslocoDirective, ReaderIconComponent, ReadAloudControlsComponent],
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.scss']
 })
@@ -20,8 +21,11 @@ export class ReaderHeaderComponent {
   readonly isFullscreen = this.headerService.isFullscreen;
   readonly bookTitle = this.headerService.bookTitle;
   readonly theme = this.headerService.theme;
+  readonly isReadingAloud = this.headerService.isReadingAloud;
+  readonly isReadAloudSupported = this.headerService.isReadAloudSupported;
   @Output() hoverChange = new EventEmitter<boolean>();
   overflowOpen = false;
+  readAloudSettingsOpen = false;
 
   onShowChapters(): void {
     this.headerService.openSidebar();
@@ -49,6 +53,18 @@ export class ReaderHeaderComponent {
 
   onShowHelp(): void {
     this.headerService.showShortcutsHelp();
+  }
+
+  onToggleReadAloud(): void {
+    this.headerService.toggleReadAloud();
+  }
+
+  onToggleReadAloudSettings(): void {
+    this.readAloudSettingsOpen = !this.readAloudSettingsOpen;
+  }
+
+  get readAloudLanguage(): string | null {
+    return this.headerService.readAloudLanguage();
   }
 
   onClose(): void {

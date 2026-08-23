@@ -52,6 +52,11 @@ node_modules/
 backend/src/main/resources/application-local.yaml
 /shared/
 
+### Kokoro TTS weights -- fetched, not committed ###
+# ~92MB. Docker pulls it with ADD --checksum; for `ng serve` run
+# `pnpm -C frontend run fetch:kokoro`.
+frontend/src/assets/kokoro/onnx/*.onnx
+
 /scratch
 /pnpm-debug.log
 /.pnpm-store/

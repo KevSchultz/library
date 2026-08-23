@@ -55,6 +55,11 @@
                 "glob": "**/*.svg",
                 "input": "node_modules/lucide-static/icons",
                 "output": "/assets/lucide/"
+              },
+              {
+                "glob": "ort-wasm-simd-threaded.jsep.*",
+                "input": "node_modules/@huggingface/transformers/dist/",
+                "output": "/assets/onnxruntime/"
               }
             ],
             "styles": [

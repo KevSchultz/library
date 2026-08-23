@@ -1,0 +1,40 @@
+<ng-container *transloco="let t; prefix: 'shared.reader.readAloud'">
+  <div class="read-aloud-controls" role="group" [attr.aria-label]="t('title')">
+    @if (showVoicePicker()) {
+      <label class="control-label" for="read-aloud-voice">{{ t('voice') }}</label>
+      <select
+        id="read-aloud-voice"
+        class="voice-select"
+        [value]="selectedVoiceURI() ?? ''"
+        (change)="onVoiceChange($event)">
+        <option value="">{{ t('automatic') }}</option>
+        @for (voice of voices(); track voice.voiceURI) {
+          <option [value]="voice.voiceURI">{{ voice.name }} ({{ voice.lang }})</option>
+        }
+      </select>
+    } @else if (isKokoro()) {
+      <p class="voice-name">{{ t('kokoroVoice') }}</p>
+    }
+
+    @if (showNoVoices()) {
+      <p class="no-voices">{{ t('noVoices') }}</p>
+    }
+
+    <!-- Speed applies to both engines, so it is never gated on the voice list. -->
+    <label class="control-label" for="read-aloud-rate">
+      {{ t('speed') }}
+      <button type="button" class="rate-value" (click)="resetRate()" [title]="t('resetSpeed')">
+        {{ rate() }}&times;
+      </button>
+    </label>
+    <input
+      id="read-aloud-rate"
+      class="rate-slider"
+      type="range"
+      [min]="rateMin"
+      [max]="rateMax"
+      step="0.1"
+      [value]="rate()"
+      (input)="onRateChange($event)">
+  </div>
+</ng-container>

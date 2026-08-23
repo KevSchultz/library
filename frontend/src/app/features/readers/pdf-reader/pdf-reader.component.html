@@ -54,6 +54,24 @@
     <div class="header-right">
       <!-- Desktop toolbar actions (hidden on mobile) -->
       <div class="desktop-actions">
+        @if (isReadAloudSupported()) {
+          <div class="read-aloud">
+            <ng-container *ngTemplateOutlet="actionBtn; context: { id: 'readAloud' }"></ng-container>
+            <button class="icon-btn read-aloud-caret" [title]="'readerPdf.toolbar.readAloudSettings' | transloco"
+              [attr.aria-label]="'readerPdf.toolbar.readAloudSettings' | transloco"
+              (click)="toggleReadAloudSettings(); $event.stopPropagation()">
+              <app-reader-icon name="chevron-down" [size]="14" />
+            </button>
+            @if (isReadAloudSettingsOpen()) {
+              <div class="toolbar-overflow-backdrop" role="presentation" (click)="closeReadAloudSettings()"></div>
+              <div class="read-aloud-popover">
+                <app-read-aloud-controls [lang]="readAloudLanguage()"
+                  (closed)="closeReadAloudSettings()"></app-read-aloud-controls>
+              </div>
+            }
+          </div>
+          <div class="separator"></div>
+        }
         <ng-container *ngTemplateOutlet="actionBtn; context: { id: 'search' }"></ng-container>
         <div class="separator"></div>
 
@@ -113,6 +131,9 @@
   <div class="toolbar-overflow-backdrop" role="presentation" (click)="closeToolbarOverflow()"></div>
   <div class="toolbar-overflow-menu" tabindex="-1" (keydown.escape)="closeToolbarOverflow()" #overflowMenu>
     <ng-container *ngTemplateOutlet="actionBtn; context: { id: 'sidebar', isOverflow: true }"></ng-container>
+    @if (isReadAloudSupported()) {
+      <ng-container *ngTemplateOutlet="actionBtn; context: { id: 'readAloud', isOverflow: true }"></ng-container>
+    }
     <ng-container *ngTemplateOutlet="actionBtn; context: { id: 'search', isOverflow: true }"></ng-container>
     <ng-container *ngTemplateOutlet="actionBtn; context: { id: 'highlight', isOverflow: true }"></ng-container>
     <ng-container *ngTemplateOutlet="actionBtn; context: { id: 'freeText', isOverflow: true }"></ng-container>
@@ -258,6 +279,17 @@
         icon: 'sidebar',
         title: 'readerPdf.toolbar.sidebar',
         active: sidebarOpen(),
+        isOverflow: isOverflow,
+        size: size
+      }"></ng-container>
+    }
+    @case ('readAloud') {
+      <ng-container *ngTemplateOutlet="btnBase; context: {
+        id: 'readAloud',
+        icon: isReadingAloud() ? 'pause' : 'play',
+        title: isReadingAloud() ? 'readerPdf.toolbar.stopReading' : 'readerPdf.toolbar.readAloud',
+        active: isReadingAloud(),
+        pressed: isReadingAloud(),
         isOverflow: isOverflow,
         size: size
       }"></ng-container>

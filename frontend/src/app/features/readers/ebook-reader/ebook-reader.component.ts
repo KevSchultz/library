@@ -15,6 +15,7 @@ import {ReaderSidebarService} from './layout/sidebar/sidebar.service';
 import {ReaderLeftSidebarService} from './layout/panel/panel.service';
 import {ReaderHeaderService} from './layout/header/header.service';
 import {ReaderNoteService} from './features/notes/note.service';
+import {EbookTtsService} from './features/tts/ebook-tts.service';
 import {BookService} from '../../book/service/book.service';
 import {BookFileService} from '../../book/service/book-file.service';
 import {ActivatedRoute} from '@angular/router';
@@ -73,7 +74,8 @@ interface PendingInitialChapterRestore {
     ReaderSidebarService,
     ReaderLeftSidebarService,
     ReaderHeaderService,
-    ReaderNoteService
+    ReaderNoteService,
+    EbookTtsService
   ],
   templateUrl: './ebook-reader.component.html',
   styleUrls: ['./ebook-reader.component.scss'],
@@ -95,6 +97,7 @@ export class EbookReaderComponent implements OnInit {
   private selectionService = inject(ReaderSelectionService);
   private headerService = inject(ReaderHeaderService);
   private noteService = inject(ReaderNoteService);
+  private ttsService = inject(EbookTtsService);
   private wakeLockService = inject(WakeLockService);
   private messageService = inject(MessageService);
   private pageTitle = inject(PageTitleService);
@@ -307,6 +310,10 @@ export class EbookReaderComponent implements OnInit {
   }
 
   private subscribeToViewEvents(): void {
+    // Read-aloud tracks `relocate` (for the visible page) and `load` (for section
+    // changes) on its own, so it subscribes alongside rather than through here.
+    this.ttsService.initialize();
+
     this.viewManager.events$
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((event: ViewEvent) => {

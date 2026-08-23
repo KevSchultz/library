@@ -17,6 +17,7 @@ import type {
   RotateCapability,
   PanCapability,
   I18nCapability,
+  DocumentManagerCapability as EmbedDocumentManagerCapability,
 } from '@embedpdf/snippet';
 
 
@@ -287,6 +288,37 @@ export class EmbedPdfBookService {
       clearTimeout(timeoutId);
       restorePage();
     });
+  }
+
+  /**
+   * Plain text of one page, for read-aloud. `pageIndex` is zero-based, unlike
+   * `currentPage`.
+   *
+   * Goes straight to the PDFium engine rather than through the selection plugin:
+   * `extractText` is one call, whereas selecting a page's text first requires its
+   * glyph geometry, which is only cached once something has already selected it.
+   *
+   * Returns null when the document is not ready, and an empty string for a page
+   * with no text layer at all — a scanned page, which would need OCR to read.
+   */
+  async getPageText(pageIndex: number): Promise<string | null> {
+    const registry = this.registry;
+    if (!registry) {
+      return null;
+    }
+
+    const dmPlugin = registry.getPlugin('document-manager');
+    const dm = dmPlugin?.provides?.() as EmbedDocumentManagerCapability | undefined;
+    const doc = dm?.getActiveDocument?.();
+    if (!doc || pageIndex < 0 || pageIndex >= doc.pageCount) {
+      return null;
+    }
+
+    try {
+      return await registry.getEngine().extractText(doc, [pageIndex]).toPromise();
+    } catch {
+      return null;
+    }
   }
 
   scrollToPage(pageNumber: number, behavior: 'instant' | 'smooth' = 'smooth'): void {

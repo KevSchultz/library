@@ -31,7 +31,10 @@
     "deselectTool": "Deselect Tool",
     "pan": "Pan Mode",
     "moreOptions": "More options",
-    "closeSearch": "Close search"
+    "closeSearch": "Close search",
+    "readAloud": "Read Aloud",
+    "stopReading": "Stop Reading",
+    "readAloudSettings": "Voice & Speed"
   },
   "footer": {
     "firstPage": "First Page",
@@ -66,7 +69,12 @@
     "bookmarkRemoved": "Bookmark Removed",
     "bookmarkExists": "Bookmark already exists on this page",
     "annotationSaved": "Annotations Saved",
-    "annotationFailed": "Failed to save annotations"
+    "annotationFailed": "Failed to save annotations",
+    "readAloudSummary": "Read Aloud",
+    "readAloudSlow": "This device generates speech slower than it plays, so there will be pauses between phrases.",
+    "readAloudFailed": "Could not read this document aloud.",
+    "readAloudUnsupported": "Read-aloud could not start on this device. It needs WebAssembly and audio playback.",
+    "readAloudNoText": "This PDF has no text layer — it looks like a scan. Reading it aloud would need OCR."
   },
   "docViewer": {
     "changesSavedInfo": "Edits in the Document Viewer are automatically saved to the PDF.",

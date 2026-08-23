@@ -1035,3 +1035,28 @@ $transition-fast: 150ms ease;
     }
   }
 }
+
+/* Read-aloud toggle plus its voice/speed popover in the book toolbar. */
+.read-aloud {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.read-aloud-caret {
+  padding: 4px 2px;
+  opacity: 0.6;
+}
+
+.read-aloud-popover {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  z-index: 1001;
+  margin-top: 4px;
+  color: var(--reader-toolbar-fg, inherit);
+  background: var(--reader-toolbar-bg, #2a2a2a);
+  border: 1px solid rgb(127 127 127 / 30%);
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgb(0 0 0 / 35%);
+}

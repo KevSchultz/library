@@ -14,6 +14,8 @@ import { PdfAnnotationService } from '../../../shared/service/pdf-annotation.ser
 import { ReaderIconComponent } from '../../readers/ebook-reader/shared/icon.component';
 import { BookMark } from '../../../shared/service/book-mark.service';
 import { EmbedPdfBookService, PdfOutlineItem, PdfScrollLayout } from './services/embedpdf-book.service';
+import { PdfTtsService } from './services/pdf-tts.service';
+import { ReadAloudControlsComponent } from '../shared/tts/read-aloud-controls.component';
 import type { AnnotationTransferItem } from '@embedpdf/snippet';
 import { PdfBookmarkService } from './services/pdf-bookmark.service';
 import { PdfSidebarComponent, PdfAnnotationListItem } from './components/pdf-sidebar.component';
@@ -40,8 +42,8 @@ type EmbedPdfMessage =
 @Component({
   selector: 'app-pdf-reader',
   standalone: true,
-  imports: [CommonModule, ProgressSpinner, TranslocoPipe, ReaderIconComponent, FormsModule, PdfSidebarComponent],
-  providers: [EmbedPdfBookService, PdfBookmarkService],
+  imports: [CommonModule, ProgressSpinner, TranslocoPipe, ReaderIconComponent, FormsModule, PdfSidebarComponent, ReadAloudControlsComponent],
+  providers: [EmbedPdfBookService, PdfBookmarkService, PdfTtsService],
   templateUrl: './pdf-reader.component.html',
   styleUrl: './pdf-reader.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -57,6 +59,7 @@ export class PdfReaderComponent implements OnInit, OnDestroy {
   readonly bookTitle = signal('');
   readonly isFullscreen = signal(false);
   readonly viewerMode = signal<'book' | 'document'>('book');
+  readonly isReadAloudSettingsOpen = signal(false);
   readonly docViewerReady = signal(false);
   readonly isDocViewerInfoVisible = signal(false);
   readonly headerVisible = signal(true);
@@ -180,6 +183,7 @@ export class PdfReaderComponent implements OnInit, OnDestroy {
   private userService = inject(UserService);
   private authService = inject(AuthService);
   private messageService = inject(MessageService);
+  private pdfTts = inject(PdfTtsService);
   private route = inject(ActivatedRoute);
   private pageTitle = inject(PageTitleService);
   private readingSessionService = inject(ReadingSessionService);
@@ -488,6 +492,10 @@ export class PdfReaderComponent implements OnInit, OnDestroy {
 
       // Initialize bookmark service early so toggleBookmark works before documentOpened$
       this.pdfBookmarkService.initialize(this.bookId);
+
+      // A PDF rarely declares a language, so read-aloud falls back to the
+      // browser's own locale to pick a voice. The user can override it.
+      this.pdfTts.initialize(this.embedPdfBook, navigator.language || null);
 
       // Subscribe to page changes (outside zone, debounced)
       this.embedPdfBook.pageChange$.pipe(
@@ -811,7 +819,29 @@ export class PdfReaderComponent implements OnInit, OnDestroy {
       case 'theme': this.toggleDarkTheme(); break;
       case 'fullscreen': this.toggleFullscreen(); break;
       case 'overflow': this.toggleToolbarOverflow(); break;
+      case 'readAloud': this.toggleReadAloud(); break;
     }
+  }
+
+  // --- Read aloud ---
+
+  readonly isReadingAloud = this.pdfTts.isReading;
+  readonly isReadAloudSupported = this.pdfTts.isSupported;
+
+  toggleReadAloud(): void {
+    this.pdfTts.toggle();
+  }
+
+  toggleReadAloudSettings(): void {
+    this.isReadAloudSettingsOpen.update(open => !open);
+  }
+
+  closeReadAloudSettings(): void {
+    this.isReadAloudSettingsOpen.set(false);
+  }
+
+  readAloudLanguage(): string | null {
+    return navigator.language || null;
   }
 
   onSearchQueryChange(value: string): void {

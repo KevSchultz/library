@@ -11,6 +11,26 @@
     <button class="icon-btn" (click)="onOpenSearch()" [title]="t('search')">
       <app-reader-icon name="search"></app-reader-icon>
     </button>
+    @if (isReadAloudSupported()) {
+      <div class="read-aloud">
+        <button class="icon-btn" (click)="onToggleReadAloud()" [class.active]="isReadingAloud()"
+          [title]="isReadingAloud() ? t('stopReading') : t('readAloud')">
+          <app-reader-icon [name]="isReadingAloud() ? 'pause' : 'play'"></app-reader-icon>
+        </button>
+        <button class="icon-btn read-aloud-caret" [title]="t('readAloudSettings')"
+          (click)="onToggleReadAloudSettings(); $event.stopPropagation()">
+          <app-reader-icon name="chevron-down" [size]="14"></app-reader-icon>
+        </button>
+        @if (readAloudSettingsOpen) {
+          <div class="overflow-backdrop" role="button" tabindex="0" [attr.aria-label]="t('more')"
+            (click)="readAloudSettingsOpen = false" (keydown.enter)="readAloudSettingsOpen = false"></div>
+          <div class="read-aloud-popover" [style.background]="theme().bg" [style.color]="theme().fg">
+            <app-read-aloud-controls [lang]="readAloudLanguage"
+              (closed)="readAloudSettingsOpen = false"></app-read-aloud-controls>
+          </div>
+        }
+      </div>
+    }
   </div>
   <span class="chapter-title">{{ bookTitle() }}</span>
   <div class="header-right">

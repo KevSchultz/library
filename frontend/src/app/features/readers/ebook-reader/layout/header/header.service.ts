@@ -5,6 +5,7 @@ import {ReaderStateService} from '../../state/reader-state.service';
 import {ReaderSidebarService} from '../sidebar/sidebar.service';
 import {ReaderLeftSidebarService} from '../panel/panel.service';
 import {BookService} from '../../../../book/service/book.service';
+import {EbookTtsService} from '../../features/tts/ebook-tts.service';
 import {EbookViewerSetting} from '../../../../book/model/book.model';
 
 @Injectable()
@@ -14,6 +15,10 @@ export class ReaderHeaderService {
   private leftSidebarService = inject(ReaderLeftSidebarService);
   private bookService = inject(BookService);
   private location = inject(Location);
+  private ttsService = inject(EbookTtsService);
+
+  readonly isReadingAloud = this.ttsService.isReading;
+  readonly isReadAloudSupported = this.ttsService.isSupported;
 
   private bookId!: number;
   private readonly _bookTitle = signal('');
@@ -82,6 +87,18 @@ export class ReaderHeaderService {
     this._showShortcutsHelp.next();
   }
 
+  toggleReadAloud(): void {
+    this.ttsService.toggle();
+  }
+
+  stopReadAloud(): void {
+    this.ttsService.stop();
+  }
+
+  readAloudLanguage(): string | null {
+    return this.ttsService.documentLanguage();
+  }
+
   close(): void {
     this.location.back();
   }
@@ -116,6 +133,7 @@ export class ReaderHeaderService {
   }
 
   reset(): void {
+    this.ttsService.stop();
     this._forceVisible.set(false);
     this._isCurrentCfiBookmarked.set(false);
     this._isFullscreen.set(false);

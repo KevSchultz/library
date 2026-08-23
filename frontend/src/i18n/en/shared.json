@@ -116,7 +116,20 @@
   },
   "reader": {
     "failedToLoadPages": "Failed to load pages",
-    "failedToLoadBook": "Failed to load the book"
+    "failedToLoadBook": "Failed to load the book",
+    "readAloud": {
+      "title": "Read aloud",
+      "start": "Read aloud",
+      "stop": "Stop reading",
+      "voice": "Voice",
+      "automatic": "Best available",
+      "speed": "Speed",
+      "resetSpeed": "Reset to normal speed",
+      "noVoices": "This browser has no speech voices installed. Read-aloud uses the voices on the device you are reading from.",
+      "kokoroVoice": "Voice: Heart",
+      "loadingModel": "Preparing the voice…",
+      "loadingModelHint": "Downloading the read-aloud voice. This happens once per device."
+    }
   },
   "settingsHelper": {
     "settingsSavedSummary": "Settings Saved",

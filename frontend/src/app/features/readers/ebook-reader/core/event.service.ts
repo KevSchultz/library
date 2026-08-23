@@ -32,6 +32,12 @@ interface RelocateEventDetail {
   pageItem?: RelocateEventItem;
   section?: { current: number; total: number };
   time?: { section?: number; total?: number };
+  /**
+   * The range currently on screen, as computed by the paginator. Foliate has
+   * always emitted this; read-aloud uses it to start speaking from the top of
+   * the visible page rather than the top of the chapter.
+   */
+  range?: Range;
 }
 
 interface DrawAnnotationEventDetail {

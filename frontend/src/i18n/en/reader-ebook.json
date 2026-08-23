@@ -88,7 +88,10 @@
     "keyboardShortcuts": "Keyboard Shortcuts",
     "more": "More",
     "settings": "Settings",
-    "closeReader": "Close Reader"
+    "closeReader": "Close Reader",
+    "readAloud": "Read Aloud",
+    "stopReading": "Stop Reading",
+    "readAloudSettings": "Voice & Speed"
   },
   "quickSettings": {
     "darkMode": "Dark Mode",
@@ -192,6 +195,10 @@
     "noteAnnotationUpdatedSummary": "Note Updated",
     "noteAnnotationUpdatedDetail": "Your note was saved successfully.",
     "noteAnnotationUpdateFailedSummary": "Unable to Update Note",
-    "noteAnnotationUpdateFailedDetail": "Something went wrong while updating the note. Please try again."
+    "noteAnnotationUpdateFailedDetail": "Something went wrong while updating the note. Please try again.",
+    "readAloudSummary": "Read Aloud",
+    "readAloudSlow": "This device generates speech slower than it plays, so there will be pauses between phrases.",
+    "readAloudFailed": "Could not start reading this book aloud.",
+    "readAloudUnsupported": "Read-aloud could not start on this device. It needs WebAssembly and audio playback."
   }
 }
